@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form action="" method="post" autocomplete="off" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <div class="row col-md-12">
+        {{form.school_name|as_crispy_field}}
+    </div>
+    <div class="row col-md-12">
+        {{form.school_type|as_crispy_field}}
+    </div>
+    <div class="row col-md-12">
+        {{form.school_category|as_crispy_field}}
+    </div>
+    <div class="row col-md-12">
+        {{form.district|as_crispy_field}}
+    </div>
+    <div class="row col-md-12">
+        {{form.school_address|as_crispy_field}}
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <a href="{% url 'home' %}" class="btn col-12 btn-secondary btn-lg">
+                <i class="fas fa-list"></i> Back to Home
+            </a>
+        </div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-success col-12 btn-lg"><i class="fas fa-clipboard-check"></i> Submit</button>
+        </div>
+    </div>
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible col-12 mx-1" role="alert">
+        <div id="form_errors">
+            {% for key, value in form.errors.items %}
+                <span class="fieldWrapper">
+                    {{ key }}:{{ value }}
+                </span>
+            {% endfor %}
+        </div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+</form>
+{% endblock content %}

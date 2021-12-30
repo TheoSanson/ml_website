@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {% for subject in subject %}
+    <div class="row col-md-6 mb-3">
+        <h5>
+            Subject
+        </h5>
+        <h2>
+            {{ subject.subject_name }}
+        </h2>
+    </div>
+    <div class="row col-md-6">
+        <h5>
+            Type
+        </h5>
+        <h2>
+            {{ subject.subject_type }}
+        </h2>
+    </div>
+    {% endfor %}
+{% endblock content %}

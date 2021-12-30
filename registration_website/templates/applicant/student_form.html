@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/student_form' %}.css">
+{% endblock links %}
+
+{% block content %}
+<form action="" method="post" autocomplete="off" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <h3>
+        Bio Data
+    </h3>
+    <div class="row">
+        <div class="col-md-4">
+            {{form.firstname|as_crispy_field}}
+        </div>
+        <div class="col-md-4">
+            {{form.middlename|as_crispy_field}}
+        </div>
+        <div class="col-md-4">
+            {{form.lastname|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{form.date_of_birth|as_crispy_field}}
+        </div>
+        <div class="col-md-4">
+            {{form.gender|as_crispy_field}}
+        </div>
+        <div class="col-md-4">
+            {{form.contactno|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.home_address|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.combined_parent_income|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            {{form.ethnicity|as_crispy_field}}
+        </div>
+        <div class="col-md-6">
+            {{form.religion|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-8">
+            {{form.school|as_crispy_field}}
+        </div>
+        <div class="col-md-4">
+            {{form.strand|as_crispy_field}}
+        </div>
+    </div>
+    {{ student_boole_form.other_school_boole.as_hidden }}
+    <fieldset class='hidden' id='school-fieldset' disabled>
+        <div class="row other-school">
+            <div class="col-md-12">
+                {{schoolform.school_name|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{schoolform.school_type|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{schoolform.school_category|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{schoolform.district|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{schoolform.school_address|as_crispy_field}}
+            </div>
+        </div>
+    </fieldset>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.times_taken|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.last_time|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.applicant_type|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.graduation_date|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.last_course|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {{form.target_campus|as_crispy_field}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{form.first_course|as_crispy_field}}
+        </div>
+        <div class="col-md-4">
+            {{form.second_course|as_crispy_field}}
+        </div>
+    </div>
+    {{form.predicted_performance.as_hidden}}
+    {{form.tracking_number.as_hidden}}
+    <div class="row mt-3">
+        <div class="col-md-10" style="display:flex; align-items: flex-end;">
+            <h3>Grade Data</h3>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-10" style="color:rgb(59, 59, 59); font-size: 17;">
+            Input (At Least) your Grade 12 Second Sem Grades Below. Add more subjects using the "Add subject" button.
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <btn class="btn btn-lg btn-secondary" type="button" id="add_more" style="font-size: 18px;">
+                <p style="height:100%; margin:0px;">
+                    Add Subject
+                </p>
+            </btn>
+        </div>
+    </div>
+
+    {{ formset.management_form }}
+    {% for subjectform in formset %}
+
+    <div class='row table form-row m-0 p-0'>
+        <table class='no_error'>
+            <div class="row m-0 p-0">
+                <div class="col-md-7 crispy-container" style="padding-left:0px;">
+                    {{subjectform.subject|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-md-3">
+                    {{subjectform.value|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-md-2 d-flex justify-content-flex=end align-items-center mb-md-0 mb-5" style="padding-left:20px !important;">
+                    <btn class="remove-form-row btn btn-danger btn-lg md-mb-0" style="background-color: #dc3545 !important; font-size: 18px; height:40px; width:120px;">
+                        Remove
+                    </btn>
+                </div>
+            </div>
+        </table>
+    </div>
+    {% endfor %}
+    <div id="empty_form" style="display:none">
+        <table class='no_error'>
+            {{ subjectform.empty_form.as_table }}
+        </table>
+    </div>
+    <!-- Rounded switch -->
+    <div class="mt-3">
+        <span>
+            <h6 style="display:inline; color:rgb(112, 112, 112)">Do you have subjects that were not listed? Check if yes</h6>
+        </span>
+    </div>
+    <div class="row mt-1">
+        <div class="col-md-10" style="display:flex; align-items: center;">
+            <h5 style="margin: 0px 10px 0px 0px;">Unlisted Subjects</h5>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <btn class="btn btn-lg btn-secondary" type="button" id="add_more" style="font-size: 18px;">
+                <p style="height:100%; margin:0px;">
+                    Add Subject
+                </p>
+            </btn>
+        </div>
+    </div>
+    {{ newformset.management_form }}
+    {% for newsubject in newformset %}
+    <fieldset id='subject-formset-fieldset' disabled>
+        <div class='row table new-form-row m-0 p-0'>
+            <table class='no_error'>
+                <div class="row m-0 p-0">
+                    <div class="col-md-6 crispy-container" style="padding-left:0px;">
+                        {{newsubject.subject_name|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                    <div class="col-md-2 crispy-container">
+                        {{newsubject.subject_type|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                    <div class="col-md-2 crispy-container">
+                        {{newsubject.subject_value|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                    <div class="col-md-2 d-flex justify-content-flex=end align-items-center mb-md-0 mb-5" style="padding-left:20px !important;">
+                        <btn class="remove-form-row btn btn-danger btn-lg md-mb-0" style="background-color: #dc3545 !important; font-size: 18px; height:40px; width:120px;">
+                            Remove
+                        </btn>
+                    </div>
+                </div>
+            </table>
+        </div>
+    </fieldset>
+    {% endfor %}
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <a href="{% url 'home' %}" class="btn col-12 btn-secondary btn-lg">
+                <i class="fas fa-list"></i> Back to Home
+            </a>
+        </div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-success col-12 btn-lg"><i class="fas fa-clipboard-check"></i> Submit</button>
+        </div>
+    </div>
+</form>
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% endblock content %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="{% static 'js/student_form.js' %}"></script>
+{% endblock javascript %}

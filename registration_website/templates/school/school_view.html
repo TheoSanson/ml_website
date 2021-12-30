@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {% for school in school %}
+    <div class="row mb-3">
+        <div class="col-md-12 mb-3">
+            <div style="display:inline-flex; align-items: flex-end;">
+                <h5>
+                    School Name
+                </h5>
+            </div>
+            <h2>
+                {{ school.school_name }}
+            </h2>
+        </div>
+    </div>
+    <hr class="my-4">
+    <div class="row mb-3">
+        <div class="row col-md-4">
+            <div style="display:inline-flex; align-items:baseline;">
+                <h5>
+                    Category 
+                </h5>
+                <h6 style="margin-left: 10px; opacity:50%;"><i>Private | Public</i></h6>
+            </div>
+            <h2>
+                {{ school.school_type }}
+            </h2>
+        </div>
+        <div class="row col-md-4">
+            <div style="display:inline-flex;  align-items:baseline;">
+                <h5>
+                    Type
+                </h5>
+                <h6 style="margin-left: 10px; opacity:50%;"><i>University | College | School</i></h6>
+            </div>
+            <h2>
+                {{ school.school_category }}
+            </h2>
+        </div>
+        <div class="row col-md-4">
+            <div style="display:inline-flex; align-items:baseline;">
+                <h5>
+                    District
+                </h5>
+                <h6 style="margin-left: 10px; opacity:50%;"><i>I | II | Other</i></h6>
+            </div>
+            <h2>
+                {{ school.district }}
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="row col-md-12">
+            <div style="display:inline-flex; align-items:baseline;">
+                <h5>
+                    Address
+                </h5>
+            </div>
+            <h2>
+                {{ school.school_address }}
+            </h2>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock content %}
