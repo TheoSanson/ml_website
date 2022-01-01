@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/student_View' %}.css">
+{% endblock links %}
+
+{% block content %}
+<h1 class="display-4">WMSU CET<br>Electronic Slip</h1>
+<p class="lead">Please present this to the examiner at your designated Test Center Code</p>
+<hr class="my-4">
+<div class="row">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h4 class='student-label'>
+                Name
+            </h4>
+            <h2>
+                {{student.lastname}}, {{student.firstname}} {{student.middlename}} 
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                Tracking Number
+            </h4>
+            <h2>
+                {{student.tracking_number}}
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class='student-label'>
+                Predicted Student Performance
+            </h4 class='student-label'>
+            {% if student.predicted_performance == 'BELOW AVERAGE' %}
+            <h2 style='color:red;'>
+                {{student.predicted_performance}}
+            </h2>
+            <p>
+                To improve your CET scores, we recommend studying topics related to English, Math, and Science.
+            </p>
+            {% elif student.predicted_performance == 'AVERAGE' %}
+            <h2>
+                {{student.predicted_performance}}
+            </h2>
+            {% else %}
+            <h2 style='color:greenyellow;'>
+                {{student.predicted_performance}}
+            </h2>
+            {% endif %}
+        </div>
+    </div>
+    <hr class="my-4">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <h4>
+                Student Previous School
+            </h4>
+            <h3>
+                {{student.school}}
+            </h3>
+        </div>
+    <div class="row">
+        <div class="col-md-5">
+            <a href="{% url 'home' %}">
+                <button type="button" class="btn btn-secondary col-12 btn-lg"><i class="fas fa-list"></i> Return to Home</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

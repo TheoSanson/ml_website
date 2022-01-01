@@ -1,5 +1,9 @@
 $('#add_more').click(function() {
-    cloneMore('div.table:last', 'form');
+    cloneMore('div.table:last', 'subject_formset');
+});
+
+$('#new_add_more').click(function() {
+    cloneMore('div.table-new:last', 'newsubject_formset');
 });
 
 function cloneMore(selector, type) {
@@ -22,16 +26,48 @@ function cloneMore(selector, type) {
 $(document).on('click', '.remove-form-row', function (e) {
     //{#console.log(".remove-form-row click clicked");#}
     e.preventDefault();
-    deleteForm('form', $(this));
+    deleteForm('subject_formset', $(this));
     return false;
 });
 
-function deleteForm(prefix_tag, btn) {
+$(document).on('click', '.new-remove-form-row', function (e) {
+    //{#console.log(".remove-form-row click clicked");#}
+    e.preventDefault();
+    newDeleteForm('newsubject_formset', $(this));
+    return false;
+});
+
+function newDeleteForm(prefix_tag, btn) {
     //https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
     //Get total number of forms counted by management form TOTAL_FORMS
     var total = parseInt($('#id_' + prefix_tag + '-TOTAL_FORMS').val());
     if(total == 1) {
         alert('Please add more subjects before deleting!');
+        return false
+    }
+
+    //Remove the closests element with class form-row
+    btn.closest('.new-form-row').remove();
+    var forms = $('.new-form-row');
+    //subtract an extra 1 to account for the hidden empty_form;
+    var formlength = forms.length;
+    var idstring = '#id_' + prefix_tag + '-TOTAL_FORMS';
+    $(idstring).val(parseInt(formlength));
+    console.log("formlength: ", formlength)
+    for (var i = 0, formCount = formlength; i < formCount; i++) {
+        $(forms.get(i)).find(':input').each(function () {
+            updateElementIndex(this, prefix_tag, i);
+        });
+    }
+    return false;
+};
+
+function deleteForm(prefix_tag, btn) {
+    //https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
+    //Get total number of forms counted by management form TOTAL_FORMS
+    var total = parseInt($('#id_' + prefix_tag + '-TOTAL_FORMS').val());
+    if(total == 4) {
+        alert('You need to input your Grade 12, 1st or 2nd Sem Grades!');
         return false
     }
 
@@ -86,6 +122,13 @@ $('#id_school').change(function() {
     }
 });
 
+$('#new-subject-checkbox').click(function(){
+    if($(this).is(':checked')){
+        setNewSubjectEnabled();
+    } else {
+        setNewSubjectDisabled();
+    }
+});
 
 function setSchoolEnabled() {
     document.getElementById('id_other_school_boole').value = true
@@ -99,4 +142,18 @@ function setSchoolDisabled() {
     document.getElementById('school-fieldset').classList.add("hidden");
     document.getElementById('school-fieldset').classList.remove("show");
     document.getElementById('school-fieldset').disabled = true;
+}
+
+function setNewSubjectEnabled() {
+    document.getElementById('id_other_subject_boole').value = true
+    document.getElementById('new-subject-fieldset').classList.remove("hidden");
+    document.getElementById('new-subject-fieldset').classList.add("show");
+    document.getElementById('new-subject-fieldset').disabled = false;
+}
+
+function setNewSubjectDisabled() {
+    document.getElementById('id_other_subject_boole').value = false
+    document.getElementById('new-subject-fieldset').classList.add("hidden");
+    document.getElementById('new-subject-fieldset').classList.remove("show");
+    document.getElementById('new-subject-fieldset').disabled = true;
 }

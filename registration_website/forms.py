@@ -222,18 +222,14 @@ class SubjectAssignmentForm(forms.ModelForm):
             'value': forms.NumberInput(attrs={'class':'form-control mt-1 mb-2'}),
         }
 
-class NewSubjectForm(forms.ModelForm):
-    subject_value = forms.FloatField()
-    subject_name = forms.CharField(label='Subject Name', max_length=100)
-    subject_type = forms.CharField(label='Subject Type', max_length=30)
-    class Meta:
-        model = Subject
-        fields = '__all__'
-        widgets = {
-            'subject_value': forms.NumberInput(attrs={'class': 'form-control mt-1 mb-3'}),
-            'subject_name': forms.TextInput(attrs={'class': 'form-control mt-1 mb-3'}),
-            'subject_type': forms.Select(attrs={'class': 'form-control mt-1 mb-3'},choices=SUBJECT_TYPE),
-        }
+class NewSubjectForm(forms.Form):
+    value = forms.FloatField()
+    subject_name = forms.CharField(max_length=100)
+    subject_type = forms.CharField(max_length=30,widget=forms.Select(choices=SUBJECT_TYPE))
 
 class StudentBooles(forms.Form):
     other_school_boole = forms.CharField(max_length=10)
+    other_subject_boole = forms.CharField(max_length=10)
+
+class SearchStatusForm(forms.Form):
+    tracking_number = forms.CharField(max_length=6)

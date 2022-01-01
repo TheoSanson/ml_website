@@ -177,37 +177,38 @@
         <div class="col-md-10" style="display:flex; align-items: center;">
             <h5 style="margin: 0px 10px 0px 0px;">Unlisted Subjects</h5>
             <label class="switch">
-                <input type="checkbox">
+                <input id="new-subject-checkbox" type="checkbox">
                 <span class="slider round"></span>
             </label>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <btn class="btn btn-lg btn-secondary" type="button" id="add_more" style="font-size: 18px;">
-                <p style="height:100%; margin:0px;">
-                    Add Subject
-                </p>
-            </btn>
-        </div>
-    </div>
+    {{ student_boole_form.other_subject_boole.as_hidden }}
     {{ newformset.management_form }}
     {% for newsubject in newformset %}
-    <fieldset id='subject-formset-fieldset' disabled>
-        <div class='row table new-form-row m-0 p-0'>
+    <fieldset class='hidden' id='new-subject-fieldset' disabled>
+        <div class="row">
+            <div class="col-md-4">
+                <btn class="btn btn-lg btn-secondary" type="button" id="new_add_more" style="font-size: 18px;">
+                    <p style="height:100%; margin:0px;">
+                        Add Subject
+                    </p>
+                </btn>
+            </div>
+        </div>
+        <div class='row table-new new-form-row m-0 p-0'>
             <table class='no_error'>
-                <div class="row m-0 p-0">
-                    <div class="col-md-6 crispy-container" style="padding-left:0px;">
+                <div class="row m-0 mt-3 p-0">
+                    <div class="col-md-5 crispy-container" style="padding-left:0px;">
                         {{newsubject.subject_name|add_class:"form-control"|as_crispy_field}}
                     </div>
-                    <div class="col-md-2 crispy-container">
+                    <div class="col-md-3 crispy-container">
                         {{newsubject.subject_type|add_class:"form-control"|as_crispy_field}}
                     </div>
                     <div class="col-md-2 crispy-container">
-                        {{newsubject.subject_value|add_class:"form-control"|as_crispy_field}}
+                        {{newsubject.value|add_class:"form-control"|as_crispy_field}}
                     </div>
                     <div class="col-md-2 d-flex justify-content-flex=end align-items-center mb-md-0 mb-5" style="padding-left:20px !important;">
-                        <btn class="remove-form-row btn btn-danger btn-lg md-mb-0" style="background-color: #dc3545 !important; font-size: 18px; height:40px; width:120px;">
+                        <btn class="new-remove-form-row btn btn-danger btn-lg md-mb-0" style="background-color: #dc3545 !important; font-size: 18px; height:40px; width:120px;">
                             Remove
                         </btn>
                     </div>
@@ -216,6 +217,11 @@
         </div>
     </fieldset>
     {% endfor %}
+    <div id="empty_form_1" style="display:none">
+        <table class='no_error'>
+            {{ newsubject.empty_form.as_table }}
+        </table>
+    </div>
     <div class="row mt-5">
         <div class="col-md-4">
             <a href="{% url 'home' %}" class="btn col-12 btn-secondary btn-lg">

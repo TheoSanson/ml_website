@@ -1,6 +1,6 @@
 from django.forms.formsets import formset_factory
 from django.shortcuts import render, redirect
-from registration_website.forms import NewSubjectForm, StudentBooles, StudentForm, SubjectAssignmentForm, SubjectForm, SchoolForm
+from registration_website.forms import NewSubjectForm, SearchStatusForm, StudentBooles, StudentForm, SubjectAssignmentForm, SubjectForm, SchoolForm
 from .models import SCHOOL_TYPE, Subject, SubjectAssignment, Student, School
 from django.forms import modelformset_factory, formset_factory
 from django.utils.crypto import get_random_string
@@ -99,9 +99,9 @@ def student_apply(request):
         initial_data = {'predicted_performance':'Pending', 'tracking_number':key}
         form = StudentForm(initial=initial_data)
         schoolform = SchoolForm()
-        formset = subjectFormset()
-        newformset = newSubjectFormset(prefix='newformset')
-        boole_initial = {'other_school_boole':'false'}
+        formset = subjectFormset(prefix='subject_formset')
+        newformset = newSubjectFormset(prefix='newsubject_formset')
+        boole_initial = {'other_school_boole':'false', 'other_subject_boole':'false'}
         student_boole_form = StudentBooles(initial=boole_initial)
         context = {
             'form': form,
@@ -111,8 +111,8 @@ def student_apply(request):
             'student_boole_form':student_boole_form,
         } 
         return render(request, "applicant/student_form.html ", context)
-    else:
 
+    else:
         #Get Main Student Form
         form = StudentForm(request.POST)
 
@@ -123,28 +123,44 @@ def student_apply(request):
 
             #Saves Main Student Form temporarily to edit data.
             tempForm = form.save(commit=False)
-            
+
+            tempBooleForm = {}
             if booleForm.is_valid():
 
                 #Code to add new school
                 tempBooleForm = booleForm.cleaned_data
-                if tempBooleForm['other_school_boole'] == 'true': #IMPORTANT! Other Value in forms.py MUST point to a valid School Object. Form won't validate otherwise.
+                #IMPORTANT! Other Value in forms.py MUST point to a valid School Object. Form won't validate otherwise.
+                if tempBooleForm['other_school_boole'] == 'true': 
                     schoolform = SchoolForm(request.POST)
                     if schoolform.is_valid():
                         school = schoolform.save()
                     tempForm.school = School.objects.get(pk=school.id)
 
-                #Code to add new Subjects
-
-
             #Final Student Form added to db
             tempForm.save()
 
+            #Code to add new Subjects
+            if tempBooleForm['other_subject_boole'] == 'true':
+                newformset = newSubjectFormset(request.POST, request.FILES, prefix='newsubject_formset')
+                for newSubjectform in newformset:
+                    if newSubjectform.is_valid():
+                        tempNewSubjectform = newSubjectform.cleaned_data
+                        newSubject = SubjectForm(tempNewSubjectform)
+                        tempNewSubject = newSubject.save()
+                        tempNewSubjectform['subject'] = tempNewSubject.id
+                        tempNewSubjectform['student'] = tempForm.id
+                        print(tempNewSubjectform)
+                        newSubjectAssignment = SubjectAssignmentForm(tempNewSubjectform)
+                        if newSubjectAssignment.is_valid():
+                            tempNewSubjectAssignment = newSubjectAssignment.save(commit=False)
+                            tempNewSubjectAssignment.student = Student.objects.get(pk=tempForm.id)
+                            print(newSubjectAssignment.cleaned_data)
+                            tempNewSubjectAssignment.save()
 
             #formset = subjectFormset(request.POST, request.FILES, instance=form)
 
             #Code fo Subject Assignments
-            formset = subjectFormset(request.POST)
+            formset = subjectFormset(request.POST, request.FILES, prefix='subject_formset')
             for subjectform in formset:
                 tempSubjectform = subjectform.save(commit=False)
                 tempSubjectform.student = Student.objects.get(pk=tempForm.id)
@@ -343,3 +359,25 @@ def student_apply(request):
         schoolform = SchoolForm()
         formset = subjectFormset()
         return render(request, "applicant/student_form.html ", {'form':form, 'schoolform':schoolform,'formset':formset})
+
+def student_search(request):
+    if request.method == 'GET':
+        form = SearchStatusForm()
+        return render(request,"applicant/student_search.html",{'form':form})
+    else:
+        form = SearchStatusForm(request.POST)
+        if form.is_valid():
+            key = request.POST['tracking_number']
+            student = Student.objects.get(tracking_number = key)
+            return render(request,'applicant/student_view.html',{'student':student})
+            # if student.status == 'Pending' or student.status == 'Denied':
+            #     return render(request,'student/view_pending.html',{'student':student})
+            # else:
+            #     assignment = Assignment.objects.get(applicant = student)
+            #     examinationId = assignment.examination.id
+            #     examination = Examination.objects.get(id = examinationId)
+            #     context = {
+            #         'examination':examination,
+            #         'student':student,
+            #         }
+            #     return render(request,'student/view_status.html',context)
