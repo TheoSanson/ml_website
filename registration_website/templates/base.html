@@ -1,0 +1,63 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>College Entrance Test Registration</title>
+        <style>
+            ul {
+                list-style-type: none;
+                padding-left: 0 !important;
+            }
+        </style>
+        <!-- CSS only -->
+        {% block links %}
+        {% endblock links %}
+        <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
+        <link rel="stylesheet" href="{% static 'css/navbar' %}.css">
+    </head>
+    <body style="background-color: rgb(246, 225, 225);">
+        <div class="sidebar">
+            <div class="logo-details">
+                <img src="https://upload.wikimedia.org/wikipedia/en/b/b7/Western_Mindanao_State_University.png" class='bx icon' style="height:80%; margin-right:10px;">
+                <div class="logo_name">WMSU TEC</div>
+                <i class='bx bx-menu' id="btn" ></i>
+            </div>
+            <ul class="nav-list">
+                <!-- <li>
+                    <i class='bx bx-search' ></i>
+                    <input type="text" placeholder="  Search...">
+                    <span class="tooltip">Search</span>
+                </li> -->
+                <li>
+                    <a href="{% url 'home' %}">
+                    <i class='bx bx-home'></i>
+                    <span class="links_name">Home</span>
+                    </a>
+                    <span class="tooltip">Home</span>
+                </li>
+            </ul>
+        </div>
+        <div class="container home-section">
+            <div class="col-md-10 offset-md-1 pt-5">
+                <div class="container-fluid bg-light p-5 mb-5">
+                    <!-- <h1 class="display-4">CET Registration</h1>
+                    <p class="lead">Western Mindanao State University Testing and Evaluation Center</p>
+                    <hr class="my-4"> -->
+                    {% block content %}
+                    {% endblock content %}
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="" crossorigin="anonymous"></script>
+        {% block javascript %}
+        {% endblock javascript %}
+        <script src="{% static 'js/navbar.js' %}"></script>
+    </body>
+</html>
