@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/student_form' %}.css">
+{% endblock links %}
+
+{% block content %}
+{% if form.instance.id %}
+<div class="row-mb-3" style='display:flex;align-items: center;justify-content: center;'>
+  <h2>Edit User Data</h2>
+  {% else %}
+  <h2>Create New User</h2>
+  {% endif %}
+</div>
+<form action="" method="post" autocomplete="off" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        {{form.username|add_class:"form-control"|as_crispy_field}}
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+          {{form.email|add_class:"form-control"|as_crispy_field}}
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+          {{form.first_name|add_class:"form-control"|as_crispy_field}}
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+          {{form.last_name|add_class:"form-control"|as_crispy_field}}
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+          {{form.password1|add_class:"form-control"|as_crispy_field}}
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+          {{form.password2|add_class:"form-control"|as_crispy_field}}
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+          <button type="submit" class="btn btn-primary col-12 btn-lg" onclick='beforeSubmit()'>
+            {% if form.instance.id %}
+            Update Data
+            {% else %}
+            Create User
+            {% endif %}
+          </button>
+      </div>
+      <div class="col-md-4"></div>
+    </div> 
+</form>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="{% static 'js/examination_forms.js' %}"></script>
+<script>
+    beforeSubmit = function(){
+        if (validateForm()){
+            $("#form-id").submit();   
+        }                 
+    }
+
+    let validateForm = function(){
+        let elementValidate = [
+            document.getElementById("id_username"),
+            document.getElementById("id_email"),
+            document.getElementById("id_first_name"),
+            document.getElementById("id_last_name"),
+            document.getElementById("id_password1"),
+            document.getElementById("id_password2"),
+        ];
+
+        let validateLength = elementValidate.length;
+        let isEmpty = false;
+
+        for(let i = 0; i < validateLength; i++){
+            if (elementValidate[i].value == "") {
+                elementValidate[i].style.outline = "solid rgb(226, 111, 111) 1px";
+                isEmpty = true;
+            }
+        }
+        
+
+        if(isEmpty == true){
+            alert('Please Fill out the Required Fields')
+            return false;
+        }
+
+        else{
+            return true;
+        }
+
+    }
+</script>
+{% endblock javascript %}

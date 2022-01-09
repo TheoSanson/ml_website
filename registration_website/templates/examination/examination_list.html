@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/table' %}.css">
+{% endblock links %}
+
+{% block content %}
+    <div class="col-md-12" style="height:600px; padding:10px;">
+        <div class="table-container" style="height:95%; width:100%;">
+            <div class="table-header">
+                <table class="table-content" style="height:100%;">
+                    <tr>
+                        <td class='subject_name-column'>
+                            Examination Date
+                        </td>
+                        <td class='subject_type-column'>
+                            Time
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-proper">
+                <table class="table-content">
+                    {% for exam in exam_list %}
+                    <tr>
+                        <td class='subject_name-column'>
+                            {{ exam.exam_date }}
+                        </td>
+                        <td class='subject_type-column'>
+                            {{ exam.exam_time }}
+                            <div class="table-button-container">
+                                <a href="{% url 'exam_view' exam.id %}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="table-add-button">
+                <a href="{% url 'exam_add' %}" class="btn btn-success btn-lg">
+                    Schedule Examination
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

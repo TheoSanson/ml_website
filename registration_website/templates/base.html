@@ -21,7 +21,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
         <link rel="stylesheet" href="{% static 'css/navbar' %}.css">
     </head>
-    <body style="background-color: rgb(246, 225, 225);">
+    <body style="background-color: rgb(224, 224, 224);">
         <div class="sidebar">
             <div class="logo-details">
                 <img src="https://upload.wikimedia.org/wikipedia/en/b/b7/Western_Mindanao_State_University.png" class='bx icon' style="height:80%; margin-right:10px;">
@@ -41,6 +41,74 @@
                     </a>
                     <span class="tooltip">Home</span>
                 </li>
+                {% if request.user.is_authenticated %}
+                {% if request.user.is_superuser %}
+                <li>
+                    <a href="{% url 'user_list' %}">
+                    <i class="fas fa-users-cog"></i>
+                    <span class="links_name">User Management</span>
+                    </a>
+                    <span class="tooltip">Manage Users of this Website</span>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'registration_list' %}">
+                    <i class="fas fa-users"></i>
+                    <span class="links_name">Applicants</span>
+                    </a>
+                    <span class="tooltip">List of Applicants</span>
+                </li>
+                <li>
+                    <a href="{% url 'exam_list' %}">
+                    <i class="fas fa-book-open"></i>
+                    <span class="links_name">Examinations</span>
+                    </a>
+                    <span class="tooltip">List of Examinations</span>
+                </li>
+                <li>
+                    <a href="{% url 'subject_list' %}">
+                    <i class="fas fa-book"></i>
+                    <span class="links_name">Subjects</span>
+                    </a>
+                    <span class="tooltip">List of Subjects</span>
+                </li>
+                <li>
+                    <a href="{% url 'college_list' %}">
+                    <i class="far fa-building"></i>
+                    <span class="links_name">Venues</span>
+                    </a>
+                    <span class="tooltip">List of College Venues</span>
+                </li>
+                <li>
+                    <a href="{% url 'user_edit' %}">
+                    <i class="fas fa-user-cog"></i>
+                    <span class="links_name">Edit Profile</span>
+                    </a>
+                    <span class="tooltip">Edit Profile</span>
+                </li>
+                <li>
+                    <a href="{% url 'logout' %}">
+                    <i class="fas fa-user-slash"></i>
+                    <span class="links_name">Logout</span>
+                    </a>
+                    <span class="tooltip">Logout of your Account</span>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{% url 'registration_apply' %}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span class="links_name">Apply for WMSU CET</span>
+                    </a>
+                    <span class="tooltip">Apply for WMSU College Entrance Test</span>
+                </li>
+                <li>
+                    <a href="{% url 'login' %}">
+                    <i class="fas fa-user"></i>
+                    <span class="links_name">Login</span>
+                    </a>
+                    <span class="tooltip">Login for WMSUTEC Users</span>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <div class="container home-section">
@@ -51,6 +119,39 @@
                     <hr class="my-4"> -->
                     {% block content %}
                     {% endblock content %}
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="footer-container">
+                <div class="footer-seal-container">
+                    <div class="footer-seal">
+                        <div class="footer-img-container">
+                            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b7/Western_Mindanao_State_University.png/200px-Western_Mindanao_State_University.png">
+                        </div>
+                        <div class="footer-wmsu-container">
+                            <p>Western Mindanao</p>
+                            <p>State University</p>
+                        </div>
+                    </div>
+                    <div class="footer-location-info" style="font-size:17px;">
+                        <p style="font-size:15px;">Testing and Evaluation Center</p>
+                        <p>Normal Road, Baliwasan</p>
+                        <p>7000, Zamboanga City</p>
+                        <p>Philippines</p>
+                    </div>
+                </div>
+                <div class="footer-buttons-container">
+                    <a href="#">Home</a>
+                    <a href="#">Examination Schedules</a>
+                </div>
+                <div class="footer-buttons-container">
+                    <a href="#">About</a>
+                    <a href="#">Mission & Vision</a>
+                    <a href="#">Support</a>
+                    <a href="#">Contact Us:</a>
+                    <p class="footer-contact-info">(062) 991-1771 </p>
+                    <p class="footer-contact-info">tec@wmsu.edu.ph</p>
                 </div>
             </div>
         </div>

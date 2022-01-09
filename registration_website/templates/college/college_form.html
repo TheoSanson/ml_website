@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+<form id="form-id" action="" method="post" autocomplete="off" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <div class="row col-md-12">
+        {{form.college_name|as_crispy_field}}
+    </div>
+    {% if formset %}
+    {{ formset.management_form }}
+    {% for venue in formset %}
+    
+        {% for hidden in venue.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+    <div class='row table m-0 p-0'>
+        <table class='no_error'>
+            <div class="row">
+                <div class="col-md-10">
+                    {{venue.room_code|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+        </table>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if new_formset %}
+
+    {{ new_formset.management_form }}
+    {% for new_venue in new_formset %}
+    {% for hidden in new_venue.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    <div class='row table form-row m-0 p-0'>
+        <table class='no_error'>
+            <div class="row">
+                <div class="col-md-10">
+                    {{new_venue.room_code|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-md-2 d-flex justify-content-flex=end align-items-center mb-md-0 mb-5" style="padding-left:20px !important;">
+                    <btn class="remove-form-row btn btn-danger btn-lg md-mb-0" style="background-color: #dc3545 !important; font-size: 18px; height:40px; width:120px;">
+                        Remove
+                    </btn>
+                </div>
+            </div>
+        </table>
+    </div>
+    {% endfor %}
+
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-4">
+            <btn class="btn btn-lg btn-secondary" type="button" id="add_more" style="font-size: 18px;">
+                <p style="height:100%; margin:0px;">
+                    Add Venue
+                </p>
+            </btn>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <a href="{% url 'home' %}" class="btn col-12 btn-secondary btn-lg">
+                <i class="fas fa-list"></i> Back to Home
+            </a>
+        </div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-success col-12 btn-lg" onclick='beforeSubmit()'><i class="fas fa-clipboard-check"></i> Submit</button>
+        </div>
+    </div>
+</form>
+{% endblock content %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="{% static 'js/venue_form.js' %}"></script>
+
+<script>
+    beforeSubmit = function(){
+        if (validateForm()){
+            $("#form-id").submit();   
+        }                 
+    }
+
+    let validateForm = function(){
+        let elementValidate = [
+            document.getElementById("id_college_name"),
+        ];
+
+        let validateLength = elementValidate.length;
+        let isEmpty = false;
+
+        for(let i = 0; i < validateLength; i++){
+            if (elementValidate[i].value == "") {
+                elementValidate[i].style.outline = "solid rgb(226, 111, 111) 1px";
+                isEmpty = true;
+            }
+        }
+        
+
+        if(isEmpty == true){
+            alert('Please Fill out the Required Forms (Highlighted in Red)')
+            return false;
+        }
+
+        else{
+            return true;
+        }
+
+    }
+</script>
+{% endblock javascript %}

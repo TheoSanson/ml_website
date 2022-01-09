@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block links %}
+{% endblock links %}
+
+{% block content %}
+<h1 class="display-4">WMSU CET<br>Dashboard</h1>
+<p class="lead">User Landing Page</p>
+<p class="lead">{{ user.username|default:'Guest' }}</p>
+<hr class="my-4">
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/table' %}.css">
+<!-- <link rel="stylesheet" href="{% static 'css/body' %}.css"> -->
+{% endblock links %}
+
+{% block content %}
+    <div class="col-md-12" style="height:600px; padding:10px;">
+        <div class="table-container" style="height:95%; width:100%;">
+            <div class="table-header">
+                <table class="table-content" style="height:100%;">
+                    <tr>
+                        <td class='student_name-column'>
+                            Student Name
+                        </td>
+                        <td class='student_exam-column'>
+                            Examination
+                        </td>
+                        <td class='student_date-column'>
+                            Date Registered
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-proper">
+                <table class="table-content">
+                    {% for student in student_list %}
+                    <tr>
+                        <td class='student_name-column'>
+                            {{ student.lastname }}, {{ student.firstname }} {{ student.middlename }}.
+                        </td>
+                        <td class='student_exam-column'>
+                            {{ student.examination_assignment.examination.exam_date }}, {{ student.examination_assignment.examination.exam_time }}
+                        </td>
+                        <td class='student_date-column'>
+                            {{ student.date_registered }}
+                            <div class="table-button-container">
+                                <a href="{% url 'registration_admin_view' student.id %}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="table-add-button">
+                <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

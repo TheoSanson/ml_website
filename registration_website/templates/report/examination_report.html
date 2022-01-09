@@ -1,0 +1,47 @@
+{% extends "report/report_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="info-row">
+    <div class='info-container' style='width:43% !important;'>
+        <div class="text-container">
+            Exam Schedule: <span class='label-header'>{{exam.exam_date}}, {{exam.exam_time}}</span>
+        </div>
+    </div>
+    <div class="info-container" style='width:37% !important;'>
+        <div class="text-container">
+            Date set: <span class='label-header'>{{ exam.time_set }}</span>
+        </div>
+    </div>
+    <div class="info-container" style='width:20% !important;'>
+        <div class="text-container">
+            Max Examinees: <span class='label-header'>{{ exam.max_examinees }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:100% !important;'>
+        <div class="text-container">
+            <span class='label-header subgroup-header'>Venue Data</span>
+        </div>
+    </div>
+</div>
+<div class="table-container">
+    {% for venue, students in venues_students %}
+    <table>
+        <tr class='table-row-info'>
+            <td class='table-header'>
+                <b>{{venue.venue}}</b>
+            </td>
+        </tr>
+        {% for student in students %}
+        <tr class='table-row-info'>
+            <td class='subject-column'>
+                {{ student }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/student_view' %}.css">
+{% endblock links %}
+
+{% block content %}
+<p class="lead">Student View</p>
+<hr class="my-4">
+<div class="row">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h4 class='student-label'>
+                Name
+            </h4>
+            <h2>
+                {{student.lastname}}, {{student.firstname}} {{student.middlename}} 
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                Contact No.
+            </h4>
+            <h2>
+                {{student.contactno}}
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h4 class='student-label'>
+                Examination Date and Time
+            </h4>
+            <h2>
+                {{ student.examination_assignment.examination.exam_date }}, {{ student.examination_assignment.examination.exam_time }} 
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h4 class='student-label'>
+                Examination Venue
+            </h4>
+            <h2>
+                {{student.examination_assignment.venue.room_code}}, {{student.examination_assignment.venue.college_code}} 
+            </h2>
+        </div>
+    </div>
+    <hr class="my-4">
+    <p class="lead">Bio Data</p>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h4 class='student-label'>
+                Gender
+            </h4>
+            <h2>
+                {{student.gender}} 
+            </h2>
+        </div>
+        <div class="col-md-6">
+            <h4 class='student-label'>
+                Date of Birth
+            </h4>
+            <h2>
+                {{student.date_of_birth}}
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h4 class='student-label'>
+                Ethnicity
+            </h4>
+            <h2>
+                {{student.ethnicity}}
+            </h2>
+        </div>
+        <div class="col-md-6">
+            <h4 class='student-label'>
+                Religion
+            </h4>
+            <h2>
+                {{student.religion}}
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-7">
+            <h4 class='student-label'>
+                Home Address
+            </h4>
+            <h2>
+                {{student.home_address}} 
+            </h2>
+        </div>
+        <div class="col-md-5">
+            <h4 class='student-label'>
+                Combined Parent Income
+            </h4>
+            <h2>
+                {{student.combined_parent_income}} 
+            </h2>
+        </div>
+    </div>
+    <hr class="my-4">
+    <p class="lead">Educational Data</p>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h4 class='student-label'>
+                Previous School
+            </h4>
+            <h2>
+                {{student.school}} 
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <h4 class='student-label'>
+                Strand
+            </h4>
+            <h2>
+                {{student.strand}} 
+            </h2>
+        </div>
+        <div class="col-md-3">
+            <h4 class='student-label'>
+                Grad. Date
+            </h4>
+            <h2>
+                {{student.graduation_date}} 
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <h4 class='student-label'>
+            Grades
+        </h4>
+        <div class="grade-container">
+            <table>
+                <tr>
+                    <td class='subject-column'>
+                        <b>Subject</b>
+                    </td>
+                    <td class='grade-column'>
+                        <b>Grade</b>
+                    </td>
+                </tr>
+                {% for grade in grades %}
+                <tr>
+                    <td class='subject-column'>
+                        {{ grade.subject }}
+                    </td>
+                    <td class='grade-column'>
+                        {{ grade.value }} 
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <hr class="my-4">
+    <p class="lead">CET Data</p>
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h4 class='student-label'>
+                Applicant Type
+            </h4>
+            <h3>
+                {{student.applicant_type}}
+            </h3>
+        </div>
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                Times Taken CET
+            </h4>
+            <h3>
+                {{student.times_taken}}
+            </h3>
+        </div>
+    </div>
+    {% if student.last_time %}
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h4 class='student-label'>
+                Last CET Taken
+            </h4>
+            <h3>
+                {{student.last_time}}
+            </h3>
+        </div>
+    </div>
+    {% endif %}
+    {% if student.applicant_type == 'College Student' %}
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h4 class='student-label'>
+                Last Course
+            </h4>
+            <h3>
+                {{student.last_course}}
+            </h3>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                Target Campus
+            </h4>
+            <h2>
+                {{student.target_campus}} 
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                1st Course Choice
+            </h4>
+            <h2>
+                {{student.first_course}} 
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                2nd Course Choice
+            </h4>
+            <h2>
+                {{student.second_course}} 
+            </h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                Tracking Number
+            </h4>
+            <h2>
+                {{student.tracking_number}}
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <h5 class='student-label'>
+                Predicted Performance:
+            </h5 class='student-label'>
+            {% if student.predicted_performance == 'BELOW AVERAGE' %}
+            <h2 style='color:red;'>
+                {{student.predicted_performance}}
+            </h2>
+            {% elif student.predicted_performance == 'AVERAGE' %}
+            <h2>
+                {{student.predicted_performance}}
+            </h2>
+            {% else %}
+            <h2 style='color:greenyellow;'>
+                {{student.predicted_performance}}
+            </h2>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                Date Registered
+            </h4>
+            <h2>
+                {{student.date_registered}}
+            </h2>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <a href="{% url 'registration_list' %}">
+                <button type="button" class="btn btn-secondary col-12 btn-lg"><i class="fas fa-list"></i> Return to List</button>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'registration_print' student.id %}" target='_blank'>
+                <button type="button" class="btn btn-secondary col-12 btn-lg"><i class="fas fa-print"></i> Print Data </button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

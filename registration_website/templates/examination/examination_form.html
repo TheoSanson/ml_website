@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/examination_form' %}.css">
+{% endblock links %}
+
+{% block content %}
+<form id="form-id" action="" method="post" autocomplete="off" onsubmit="return validateForm()">
+    {% csrf_token %}
+    {% if exam %}
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h3>
+                The Schedule you've set conflicts with the following:
+            </h3>
+            <h2>
+                {{ exam.exam_date }} {{ exam.exam_time }}, Set on {{ exam.time_set }}
+            </h2>
+        </div>
+    </div>
+    {% endif %}
+    <h2>
+        Enter Exam Details
+    </h2>
+    <div class="row">
+        <div class="col-md-4">
+            {{form.exam_date|as_crispy_field}}
+        </div>
+        <div class="col-md-4">
+            {{form.exam_time|as_crispy_field}}
+        </div>
+        {% if venues %}
+        <div class="col-md-4" style='display:none;'>
+            {{form.max_examinees.as_hidden}}
+        </div>
+        {% else %}
+        <div class="col-md-4">
+            {{form.max_examinees|as_crispy_field}}
+        </div>
+        {% endif %}
+    </div>
+    {% if venues %}
+    <div class="row mt-4">
+        <h2>
+            Venues Set
+        </h2>
+    </div>
+    {% for venue in venues %}
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                {{ venue.venue.room_code }} {{ venue.venue.college_code }}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <fieldset class='mt-4'>
+        <h2>
+            Select Venues for the Exam
+        </h2>
+        <div style='width:100%; height:300px; overflow-y:auto; background-color: white; padding:10px;'>
+            {{ ext_venue_formset.management_form }}
+            {{ ext_venueBoole_formset.management_form }}
+            {% for venue_formset, venueBoole_formset, venue, row_ids in formsets %}
+                <div class="venue_form_row" id="{{ row_ids }}" style='height:40px; margin-top: 3px; background-color: white; border: solid black 1px; padding:5px; border-radius: 3px;'>
+                    <label class="col-md-12">
+                        {{ venue }}
+                    </label>
+                    {{venueBoole_formset.venue_boole.as_hidden}}
+                    {{venue_formset.venue.as_hidden}}
+                </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <a href="{% url 'home' %}" class="btn col-12 btn-secondary btn-lg">
+                <i class="fas fa-list"></i> Back to Home
+            </a>
+        </div>
+        {% if venues %}
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-success col-12 btn-lg" onclick='beforeSubmit()'><i class="fas fa-clipboard-check"></i> Update Examination</button>
+        </div>
+        {% else %}
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-success col-12 btn-lg" onclick='beforeSubmit()'><i class="fas fa-clipboard-check"></i> Create Examination</button>
+        </div>
+        {% endif %}
+    </div>
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible col-12 mx-1" role="alert">
+        <div id="form_errors">
+            {% for key, value in form.errors.items %}
+                <span class="fieldWrapper">
+                    {{ key }}:{{ value }}
+                </span>
+            {% endfor %}
+        </div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+</form>
+{% endblock content %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="{% static 'js/examination_forms.js' %}"></script>
+
+
+<script>
+    beforeSubmit = function(){
+        if (validateForm()){
+            $("#form-id").submit();   
+        }                 
+    }
+
+    let validateForm = function(){
+        let elementValidate = [
+            document.getElementById("id_exam_date"),
+            document.getElementById("id_exam_time"),
+            document.getElementById("id_max_examinees"),
+        ];
+
+        let validateLength = elementValidate.length;
+        let isEmpty = false;
+
+        for(let i = 0; i < validateLength; i++){
+            if (elementValidate[i].value == "") {
+                elementValidate[i].style.outline = "solid rgb(226, 111, 111) 1px";
+                isEmpty = true;
+            }
+        }
+        
+
+        if(isEmpty == true){
+            alert('Please Fill out the Required Forms (Highlighted in Red)')
+            return false;
+        }
+
+        else{
+            return true;
+        }
+
+    }
+</script>
+{% endblock javascript %}

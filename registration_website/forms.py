@@ -1,8 +1,11 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db.models import fields
 from django.forms import widgets
 from django.forms.widgets import MultiWidget, RadioSelect, TextInput
-from .models import SCHOOL_CATEGORY, SCHOOL_TYPE, School, Subject, SubjectAssignment, Venue, Student
+from .models import SCHOOL_CATEGORY, SCHOOL_TYPE, College, Examination, ExaminationVenueAssignment, School, Subject, SubjectAssignment, Venue, Student
 
 SUBJECT_TYPE = [
     ("English","English"),
@@ -114,6 +117,8 @@ class EthnicityMultiValueField(forms.MultiValueField):
         else:
             del value[1]
         return "|".join(value)
+
+
 class StudentForm(forms.ModelForm):
 
     religion = ReligionMultiValueField() #Assigns custom multivaluefield to religion formfield
@@ -125,7 +130,7 @@ class StudentForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = '__all__'
+        exclude = ('examination_assignment',)
 
         GENDER = (
             ('','---------'), 
@@ -233,3 +238,57 @@ class StudentBooles(forms.Form):
 
 class SearchStatusForm(forms.Form):
     tracking_number = forms.CharField(max_length=6)
+
+class ExaminationForm(forms.ModelForm):
+    class Meta:
+        model = Examination
+        fields = (
+            'exam_date',
+            'exam_time',
+            'max_examinees'
+        )
+        widgets = {
+            'exam_date': forms.DateInput(attrs={'class': 'form-control mt-1 mb-3', 'type': 'date'}),
+            'exam_time': forms.TimeInput(attrs={'class': 'form-control mt-1 mb-3', 'type': 'time'}),
+            'max_examinees': forms.NumberInput(attrs={'class': 'form-control mt-1 mb-3'})
+        }
+
+class ExaminationVenueAssignmentForm(forms.ModelForm):
+    class Meta:
+        model = ExaminationVenueAssignment
+        fields = {
+            'venue',
+        }
+        widgets = {
+            'venue': forms.NumberInput(attrs={'class':'form-control mt-1 mb-2','read_only':'true'}),
+        }
+
+class VenueBooleForm(forms.Form):
+    venue_boole = forms.CharField(max_length=10)
+
+class CollegeForm(forms.ModelForm):
+    class Meta:
+        model = College
+        fields = {
+            'college_name',
+        }
+        widgets = {
+            'college_name': forms.TextInput(attrs={'class':'form-control mt-1 mb-2'}),
+        }
+
+class VenueForm(forms.ModelForm):
+    class Meta:
+        model = Venue
+        fields = {
+            'room_code',
+            'college_code'
+        }
+
+class SignUpForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')

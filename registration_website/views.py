@@ -1,16 +1,108 @@
 from django.forms.formsets import formset_factory
 from django.shortcuts import render, redirect
-from registration_website.forms import NewSubjectForm, SearchStatusForm, StudentBooles, StudentForm, SubjectAssignmentForm, SubjectForm, SchoolForm
-from .models import SCHOOL_TYPE, Subject, SubjectAssignment, Student, School
-from django.forms import modelformset_factory, formset_factory
+from numpy import object_
+from registration_website.forms import CollegeForm, ExaminationForm, ExaminationVenueAssignmentForm, NewSubjectForm, SearchStatusForm, SignUpForm, StudentBooles, StudentForm, SubjectAssignmentForm, SubjectForm, SchoolForm, VenueBooleForm, VenueForm
+from .models import SCHOOL_TYPE, College, Examination, ExaminationVenueAssignment, Subject, SubjectAssignment, Student, School, Venue
+from django.forms import modelformset_factory, formset_factory, inlineformset_factory
 from django.utils.crypto import get_random_string
 import string, pickle
 import pandas as pd
+#import datetime
+from datetime import datetime, timedelta, date
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group, User
 
 # Create your views here.
 def home(request):
-    return
+    return render(request,'home.html')
 
+@login_required
+def user_form(request):
+    if not request.user.is_superuser:
+            return redirect('permission_redirect')
+
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            my_group = Group.objects.get(name='TEC_User') 
+            my_group.user_set.add(user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
+        
+    return render(request, 'user/user_form.html', {'form': form})
+
+@login_required
+def user_list(request):
+    if not request.user.is_superuser:
+            return redirect('permission_redirect')
+    users = User.objects.filter(groups__name='TEC_User')
+    context = {
+        'users':users
+    }
+    return render(request, 'user/user_list.html', context)
+
+@login_required
+def user_view(request,id=0):
+    if not request.user.is_superuser:
+            return redirect('permission_redirect')
+    user = User.objects.get(pk=id)
+    context = {
+        'user':user
+    }
+    return render(request, 'user/user_list.html', context)
+
+@login_required
+def user_edit(request):
+    user = User.objects.get(pk=request.user.id)
+    if request.method == 'POST':
+        form = SignUpForm(request.POST,instance=user)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, user)
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            #my_group = Group.objects.get(name='TEC_User') 
+            #my_group.user_set.add(user)
+            return redirect('home')
+    else:
+        form = SignUpForm(instance=user)
+
+    return render(request, 'user/user_form.html', {'form': form})
+
+@login_required
+def user_admin_edit(request,id=0):
+    if not request.user.is_superuser:
+            return redirect('permission_redirect')
+    user = User.objects.get(pk=id)
+    if request.method == 'POST':
+        form = SignUpForm(request.POST,instance=user)
+        if form.is_valid():
+            form.save()
+            #update_session_auth_hash(request, user)
+            #username = form.cleaned_data.get('username')
+            #raw_password = form.cleaned_data.get('password1')
+            #user = authenticate(username=username, password=raw_password)
+            #my_group = Group.objects.get(name='TEC_User') 
+            #my_group.user_set.add(user)
+            return redirect('home')
+    else:
+        form = SignUpForm(instance=user)
+
+    return render(request, 'user/user_form.html', {'form': form})
+
+def user_permission_redirect(request):
+    return render(request, 'permission_warning.html')
+
+@login_required
 def subject_form(request,id=0):
     if request.method == "GET":
         if id == 0:
@@ -30,9 +122,7 @@ def subject_form(request,id=0):
 
         return redirect('/registration/subject/list/')
 
-        if id == 0:
-            return #redirect('/examination/list/')
-
+@login_required
 def subject_view(request,id=0):
     if id != 0:
         subject = [
@@ -44,6 +134,7 @@ def subject_view(request,id=0):
         return render(request,"subject/subject_view.html",context)
     return #
 
+@login_required
 def subject_list(request):
     subject_objects = Subject.objects.all
     context = {
@@ -51,6 +142,7 @@ def subject_list(request):
     }
     return render(request, "subject/subject_list.html ", context)
 
+@login_required
 def school_form(request, id=0):
     if request.method == "GET":
         if id == 0:
@@ -70,6 +162,7 @@ def school_form(request, id=0):
             
         return redirect('/registration/school/list/')
 
+@login_required
 def school_view(request,id=0):
     if id != 0:
         school = [
@@ -81,6 +174,7 @@ def school_view(request,id=0):
         return render(request,"school/school_view.html",context)
     return #
 
+@login_required
 def school_list(request):
     school_objects = School.objects.all
     context = {
@@ -136,6 +230,23 @@ def student_apply(request):
                         school = schoolform.save()
                     tempForm.school = School.objects.get(pk=school.id)
 
+            #Assign Student to Exam
+            examinations = Examination.objects.filter(exam_date__gt = date.today())
+            print('PRE EXAM LOOP')
+            for exam in examinations:
+                print('EXAM')
+                ExamVenues = exam.examination_venues.all()
+                for exam_venue in ExamVenues:
+                    print('EXAM VENUE')
+                    if exam_venue.current_examinees < exam_venue.max_examinees:
+                        tempForm.examination_assignment = exam_venue
+                        exam_venue.current_examinees = exam_venue.current_examinees + 1
+                        exam_venue.save()
+                        break
+                else:
+                    continue
+                break
+
             #Final Student Form added to db
             tempForm.save()
 
@@ -149,12 +260,10 @@ def student_apply(request):
                         tempNewSubject = newSubject.save()
                         tempNewSubjectform['subject'] = tempNewSubject.id
                         tempNewSubjectform['student'] = tempForm.id
-                        print(tempNewSubjectform)
                         newSubjectAssignment = SubjectAssignmentForm(tempNewSubjectform)
                         if newSubjectAssignment.is_valid():
                             tempNewSubjectAssignment = newSubjectAssignment.save(commit=False)
                             tempNewSubjectAssignment.student = Student.objects.get(pk=tempForm.id)
-                            print(newSubjectAssignment.cleaned_data)
                             tempNewSubjectAssignment.save()
 
             #formset = subjectFormset(request.POST, request.FILES, instance=form)
@@ -354,7 +463,8 @@ def student_apply(request):
                 tempStudent.predicted_performance = prediction[0]
                 tempStudent.save()
 
-                return render(request, "subject/subject_list.html ")
+                return redirect('/registration/view/'+tempStudent.tracking_number)
+                
 
         schoolform = SchoolForm()
         formset = subjectFormset()
@@ -368,16 +478,360 @@ def student_search(request):
         form = SearchStatusForm(request.POST)
         if form.is_valid():
             key = request.POST['tracking_number']
-            student = Student.objects.get(tracking_number = key)
-            return render(request,'applicant/student_view.html',{'student':student})
-            # if student.status == 'Pending' or student.status == 'Denied':
-            #     return render(request,'student/view_pending.html',{'student':student})
-            # else:
-            #     assignment = Assignment.objects.get(applicant = student)
-            #     examinationId = assignment.examination.id
-            #     examination = Examination.objects.get(id = examinationId)
-            #     context = {
-            #         'examination':examination,
-            #         'student':student,
-            #         }
-            #     return render(request,'student/view_status.html',context)
+            return redirect('/registration/view/'+key)
+
+def student_view(request, key=0):
+    if key != 0:
+        student = [
+            Student.objects.get(tracking_number = key)
+            #Student.objects.filter(tracking_number__iexact = key).first(),
+        ]
+        exam_assignment = ExaminationVenueAssignment.objects.get(pk=student[0].examination_assignment.id)
+        exam_venue = [
+           student[0].examination_assignment.venue
+        ]
+        examination = [
+            exam_assignment.examination
+        ]
+        context = {
+            'student':student,
+            'examination':examination,
+            'exam_venue':exam_venue
+        }
+        return render(request,"applicant/student_view.html",context)
+    return #
+
+@login_required
+def student_list(request):
+    student = Student.objects.all()
+    context = {
+        'student_list':student,
+    }
+    return render(request,"applicant/student_list.html",context)
+
+@login_required
+def student_admin_view(request, id=0):
+    student = Student.objects.get(pk=id)
+    grades = student.grades.all()
+    context = {
+        'student':student,
+        'grades':grades
+    }
+    return render(request,"applicant/student_admin_view.html",context)
+
+@login_required
+def examination_form(request):
+    
+    if request.method == 'GET':
+        form = ExaminationForm()
+        #venues = Venue.objects.filter().values()
+        venue_objects =  Venue.objects.all()
+        venues = venue_objects.values()
+        venue_ids = [a_dict['id'] for a_dict in venues]
+        id_dicts = []
+        for id in venue_ids:
+            id_dicts.append({'venue':id})
+        temp_formset = formset_factory(ExaminationVenueAssignmentForm,extra=0)
+        venue_formset = temp_formset(initial=id_dicts,prefix='venue_formset')
+
+        temp2_formset = formset_factory(VenueBooleForm, extra=0)
+        boole_initial = []
+        for i in range(len(id_dicts)):
+            boole_initial.append({'venue_boole':'false'})
+        venueBoole_formset = temp2_formset(initial=boole_initial,prefix='venueBoole_formset')
+        
+        row_ids = []
+        for i in range(len(id_dicts)):
+            row_ids.append(i)
+
+        formsets = zip(venue_formset, venueBoole_formset, venue_objects, row_ids)
+        return render(request,"examination/examination_form.html",{'form':form, 'formsets':formsets, 'ext_venue_formset':venue_formset,'ext_venueBoole_formset':venueBoole_formset})
+    
+    else:
+        temp_formset = formset_factory(ExaminationVenueAssignmentForm)
+        temp2_formset = formset_factory(VenueBooleForm)
+        form = ExaminationForm(request.POST)
+        if form.is_valid(): #Checks for Sched Conflicts
+            duration = 4 # No. of Hrs. per Exam
+            set_date = form.cleaned_data.get('exam_date')
+            set_time = form.cleaned_data.get('exam_time') #
+            set_temp_datetime_delta = datetime.combine(date.today(),set_time) + timedelta(hours = duration)
+            set_end = set_temp_datetime_delta.time() #
+            #set_test_center = form.cleaned_data.get('test_center_code')
+            #set_room = form.cleaned_data.get('room_id')
+            all_upcoming_examination_same_room = Examination.objects.filter(exam_date__exact = set_date)
+            for exam in all_upcoming_examination_same_room:
+                old_start = exam.exam_time
+                old_temp_datetime_delta = datetime.combine(date.today(),old_start) + timedelta(hours = duration)
+                old_end = old_temp_datetime_delta.time()
+                if (set_time >= old_start and set_time < old_end) or (set_end >= old_start and set_end < old_end):
+
+                    venue_objects =  Venue.objects.all()
+                    venues = venue_objects.values()
+                    venue_ids = [a_dict['id'] for a_dict in venues]
+                    id_dicts = []
+                    for id in venue_ids:
+                        id_dicts.append({'venue':id})
+                    temp_formset = formset_factory(ExaminationVenueAssignmentForm,extra=0)
+                    venue_formset = temp_formset(initial=id_dicts,prefix='venue_formset')
+                    temp2_formset = formset_factory(VenueBooleForm, extra=0)
+                    boole_initial = []
+                    for i in range(len(id_dicts)):
+                        boole_initial.append({'venue_boole':'false'})
+                    venueBoole_formset = temp2_formset(initial=boole_initial,prefix='venueBoole_formset')
+                    row_ids = []
+                    for i in range(len(id_dicts)):
+                        row_ids.append(i)
+                    formsets = zip(venue_formset, venueBoole_formset, venue_objects, row_ids)
+
+                    return render(request,"examination/examination_form.html",{'form':form, 'exam':exam, 'formsets':formsets, 'ext_venue_formset':venue_formset,'ext_venueBoole_formset':venueBoole_formset})
+
+            examination = form.save()
+        venue_formset = temp_formset(request.POST, request.FILES, prefix='venue_formset')
+        venue_boole_formset = temp2_formset(request.POST, request.FILES, prefix='venueBoole_formset')
+        for booleFormset, formset in zip(venue_boole_formset, venue_formset):
+            if booleFormset.is_valid():
+                tempBooleForm = booleFormset.cleaned_data
+                print(tempBooleForm)
+                if tempBooleForm['venue_boole'] == 'true':
+                    print('hello world!')
+                    if formset.is_valid():
+                        formset = formset.save(commit=False)
+                        formset.examination = Examination.objects.get(pk=examination.id)
+                        formset.max_examinees = examination.max_examinees
+                        formset.save()
+
+        return redirect('/registration/exam/list/')
+
+@login_required
+def examination_edit(request,id = 0):
+
+    if request.method == 'GET':
+        if id != 0:
+            exam = Examination.objects.get(pk=id)
+            initial = {
+                'max_examinees':exam.max_examinees
+            }
+            form = ExaminationForm(instance=exam, initial=initial)
+            exam_venues = ExaminationVenueAssignment.objects.select_related().filter(examination = exam.id)
+
+            object_id_list = exam_venues.values_list('venue_id', flat=True)
+            #object_id_list = object_id_list.values_list('id',flat=True)
+            venue_objects =  Venue.objects.filter().exclude(id__in = object_id_list)
+            venues = venue_objects.values()
+            venue_ids = [a_dict['id'] for a_dict in venues]
+            id_dicts = []
+            for id in venue_ids:
+                id_dicts.append({'venue':id})
+            temp_formset = formset_factory(ExaminationVenueAssignmentForm,extra=0)
+            venue_formset = temp_formset(initial=id_dicts,prefix='venue_formset')
+            temp2_formset = formset_factory(VenueBooleForm, extra=0)
+            boole_initial = []
+            for i in range(len(id_dicts)):
+                boole_initial.append({'venue_boole':'false'})
+            venueBoole_formset = temp2_formset(initial=boole_initial,prefix='venueBoole_formset')
+            row_ids = []
+            for i in range(len(id_dicts)):
+                row_ids.append(i)
+            formsets = zip(venue_formset, venueBoole_formset, venue_objects, row_ids)
+
+            return render(request,"examination/examination_form.html",{'form':form, 'venues':exam_venues, 'formsets':formsets, 'ext_venue_formset':venue_formset,'ext_venueBoole_formset':venueBoole_formset})
+
+    else:
+        temp_formset = formset_factory(ExaminationVenueAssignmentForm)
+        temp2_formset = formset_factory(VenueBooleForm)
+        old_exam = Examination.objects.get(pk=id)
+        form = ExaminationForm(request.POST, instance=old_exam)
+        if form.is_valid(): #Checks for Sched Conflicts
+            duration = 4 # No. of Hrs. per Exam
+            set_date = form.cleaned_data.get('exam_date')
+            set_time = form.cleaned_data.get('exam_time') #
+            set_temp_datetime_delta = datetime.combine(date.today(),set_time) + timedelta(hours = duration)
+            set_end = set_temp_datetime_delta.time() #
+            #set_test_center = form.cleaned_data.get('test_center_code')
+            #set_room = form.cleaned_data.get('room_id')
+            all_upcoming_examination_same_room = Examination.objects.filter(exam_date__exact = set_date).exclude(id__iexact = id)
+            for exam in all_upcoming_examination_same_room:
+                old_start = exam.exam_time
+                old_temp_datetime_delta = datetime.combine(date.today(),old_start) + timedelta(hours = duration)
+                old_end = old_temp_datetime_delta.time()
+                if (set_time >= old_start and set_time < old_end) or (set_end >= old_start and set_end < old_end):
+
+                    venue_objects =  Venue.objects.all()
+                    venues = venue_objects.values()
+                    venue_ids = [a_dict['id'] for a_dict in venues]
+                    id_dicts = []
+                    for id in venue_ids:
+                        id_dicts.append({'venue':id})
+                    temp_formset = formset_factory(ExaminationVenueAssignmentForm,extra=0)
+                    venue_formset = temp_formset(initial=id_dicts,prefix='venue_formset')
+                    temp2_formset = formset_factory(VenueBooleForm, extra=0)
+                    boole_initial = []
+                    for i in range(len(id_dicts)):
+                        boole_initial.append({'venue_boole':'false'})
+                    venueBoole_formset = temp2_formset(initial=boole_initial,prefix='venueBoole_formset')
+                    row_ids = []
+                    for i in range(len(id_dicts)):
+                        row_ids.append(i)
+                    formsets = zip(venue_formset, venueBoole_formset, venue_objects, row_ids)
+
+                    return render(request,"examination/examination_form.html",{'form':form, 'exam':exam, 'formsets':formsets, 'ext_venue_formset':venue_formset,'ext_venueBoole_formset':venueBoole_formset})
+
+            examination = form.save()
+
+            venue_formset = temp_formset(request.POST, request.FILES, prefix='venue_formset')
+            venue_boole_formset = temp2_formset(request.POST, request.FILES, prefix='venueBoole_formset')
+
+            for booleFormset, formset in zip(venue_boole_formset, venue_formset):
+                if booleFormset.is_valid():
+                    print('VALID!')
+                    tempBooleForm = booleFormset.cleaned_data
+                    if tempBooleForm['venue_boole'] == 'true':
+                        if formset.is_valid():
+                            formset = formset.save(commit=False)
+                            formset.examination = Examination.objects.get(pk=examination.id)
+                            formset.max_examinees = examination.max_examinees
+                            formset.save()
+
+    return redirect('/registration/exam/list/')
+
+@login_required
+def examination_list(request):
+    exam_objects = Examination.objects.all()
+    context = {
+        'exam_list': exam_objects
+    }
+    return render(request, "examination/examination_list.html", context)
+
+@login_required
+def examination_view(request,id=0):
+    exam = Examination.objects.get(pk=id)
+    venues = exam.examination_venues.all()
+    students = []
+    for venue in venues:
+        students.append(venue.student_examinations.all())
+    venues_students = zip(venues,students)
+    context = {
+        'exam':exam,
+        'venues_students':venues_students
+    }
+    return render(request,"examination/examination_view.html",context)
+
+@login_required
+def college_venue_form(request,id=0):
+    venue_formset = inlineformset_factory(College, Venue, fields=('room_code',), extra=1)
+    if request.method == 'GET':
+        if id == 0:
+            form = CollegeForm()
+            formset = venue_formset(prefix='venue_new')
+            context = {
+                'form':form,
+                'new_formset':formset,
+            }
+        else:
+            college = College.objects.get(pk=id)
+            form = CollegeForm(instance=college)
+            new_formset = venue_formset(prefix='venue_new')
+            venue_formset = inlineformset_factory(College, Venue, fields=('room_code',), extra=0)
+            formset = venue_formset(prefix='venue',instance=college)
+            context = {
+                'form':form,
+                'formset':formset,
+                'new_formset':new_formset
+            }
+
+        return render(request, "college/college_form.html", context)
+
+    else:
+        if id == 0:
+            form = CollegeForm(request.POST)
+            formset = venue_formset(request.POST, request.FILES, prefix='venue_new')
+            if form.is_valid():
+                college = form.save()
+                for venue in formset:
+                    if venue.is_valid():
+                        venue_data = venue.cleaned_data
+                        venue_data['college_code'] = college
+                        venue_form = VenueForm(venue_data)
+                        if venue_form.is_valid():
+                            venue_form.save()
+
+        else:
+            college = College.objects.get(pk=id)
+            form = CollegeForm(request.POST,instance=college)
+            old_formset = venue_formset(request.POST, request.FILES, prefix='venue', instance=college)
+            new_formset = venue_formset(request.POST, request.FILES, prefix='venue_new')
+            if form.is_valid():
+                print('POST COLLEGE ISVALID')
+                college = form.save()
+                print('PRE FS ISVALID')
+                if old_formset.is_valid():
+                    old_formset.save()
+                
+                for venue in new_formset:
+                    if venue.is_valid():
+                        venue_data = venue.cleaned_data
+                        venue_data['college_code'] = college
+                        venue_form = VenueForm(venue_data)
+                        if venue_form.is_valid():
+                            venue_form.save()
+            return redirect('/registration/college/list/')
+    return redirect('/registration/college/list/')
+
+@login_required
+def college_list(request):
+    college_objects = College.objects.all
+    context = {
+        'college_list': college_objects
+    }
+    return render(request, "college/college_list.html", context)
+
+@login_required
+def college_view(request,id=0):
+    if id != 0:
+        college = College.objects.get(pk=id)
+        venues = college.venues.all()
+        context = {
+            'college':college,
+            'venues':venues,
+        }
+        return render(request, "college/college_view.html", context)
+    return
+
+@login_required
+def student_print(request,id=0):
+    student = Student.objects.get(pk=id)
+    grades = student.grades.all()
+    context = {
+        'student':student,
+        'grades':grades
+    }
+    return render(request,"report/student_report.html",context)
+
+@login_required
+def examination_print(request,id=0):
+    exam = Examination.objects.get(pk=id)
+    venues = exam.examination_venues.all()
+    students = []
+    for venue in venues:
+        students.append(venue.student_examinations.all())
+    venues_students = zip(venues,students)
+    context = {
+        'exam':exam,
+        'venues_students':venues_students
+    }
+    return render(request,"report/examination_report.html",context)
+
+@login_required
+def examination_venue_print(request,id=0):
+    venue = ExaminationVenueAssignment.objects.get(pk=id)
+    students = venue.student_examinations.all()
+    context = {
+        'venue':venue,
+        'students':students
+    }
+    return render(request,"report/venue_report.html",context)
+
+@login_required
+def user_dashboard(request):
+    return render(request,"user/user_dashboard.html")

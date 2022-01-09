@@ -1,0 +1,177 @@
+{% extends "report/report_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="info-row">
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Student Name: <span class='label-header'>{{ student.lastname }}, {{ student.firstname }} {{ student.middlename }}.</span>
+        </div>
+    </div>
+    <div class="info-container" style='width:22% !important;'>
+        <div class="text-container">
+            System ID: <span class='label-header'>{{ student.id }}</span>
+        </div>
+    </div>
+    <div class="info-container" style='width:28% !important;'>
+        <div class="text-container">
+            Contact No.: <span class='label-header'>{{ student.contactno }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:100% !important;'>
+        <div class="text-container">
+            <span class='label-header subgroup-header'>Bio Data</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:100% !important;'>
+        <div class="text-container">
+            Home Address: <span class='label-header'>{{ student.home_address }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:25% !important;'>
+        <div class="text-container">
+            D.O.B.: <span class='label-header'>{{ student.date_of_birth }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:25% !important;'>
+        <div class="text-container">
+            Gender: <span class='label-header'>{{ student.gender }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Parent Income: <span class='label-header'>{{ student.combined_parent_income }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Religion: <span class='label-header'>{{ student.religion }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Ethnicity: <span class='label-header'>{{ student.ethnicity }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:100% !important;'>
+        <div class="text-container">
+            <span class='label-header subgroup-header'>Education Data</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:65% !important;'>
+        <div class="text-container">
+            School: <span class='label-header'>{{ student.school }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:35% !important;'>
+        <div class="text-container">
+            Graduation Date: <span class='label-header'>{{ student.graduation_date }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:15% !important;'>
+        <div class="text-container">
+            Strand: <span class='label-header'>{{ student.strand }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Applicant Type: <span class='label-header'>{{ student.applicant_type }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:35% !important;'>
+        <div class="text-container">
+            Last College Course: <span class='label-header'>{{ student.last_course }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:100% !important;'>
+        <div class="text-container">
+            <span class='label-header subgroup-header'>Academic Data</span>
+        </div>
+    </div>
+</div>
+<div class="table-container">
+    <table>
+        <tr>
+            <td class='subject-column table-header'>
+                <div class='header'>
+                    Subject
+                </div>
+            </td>
+            <td class='grade-column table-header'>
+                <div class='header'>
+                    Grade
+                </div>
+            </td>
+        </tr>
+        {% for grade in grades %}
+        <tr class='table-row-info'>
+            <td>
+                {{ grade.subject }}
+            </td>
+            <td>
+                {{ grade.value}}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:100% !important;'>
+        <div class="text-container">
+            <span class='label-header subgroup-header'>CET Data</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:25% !important;'>
+        <div class="text-container">
+            Times Taken CET: <span class='label-header'>{{ student.times_taken }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:25% !important;'>
+        <div class="text-container">
+            Last Time Taken: <span class='label-header'>{{ student.last_time }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Current Examination Schedule: <span class='label-header'>{{ student.examination_assignment.examination.exam_date }}, {{ student.examination_assignment.examination.exam_time }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:100% !important;'>
+        <div class="text-container">
+            Predicted CET Performance: <span class='label-header'>{{ student.predicted_performance }}</span>
+        </div>
+    </div>
+</div>
+<div class="info-row">
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Tracking Number: <span class='label-header'>{{ student.tracking_number }}</span>
+        </div>
+    </div>
+    <div class='info-container' style='width:50% !important;'>
+        <div class="text-container">
+            Date Registered: <span class='label-header'>{{ student.date_registered }}</span>
+        </div>
+    </div>
+</div>
+{% endblock content %}

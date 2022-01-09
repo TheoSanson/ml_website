@@ -1,17 +1,26 @@
 .table-container{
     border: solid rgb(0, 0, 0) 1px; 
-    background-color: rgb(241, 241, 241);
+    background-color: rgb(255, 255, 255);
 }
 
 .table-header{
     width:100%;
     height:40px;
+    color:white;
 }
 
 .table-content{
     width:100%;
     border-spacing: 2px;
     border-collapse: separate !important;
+}
+
+tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff;
 }
 
 tr{
@@ -23,8 +32,7 @@ td{
 }
 
 .table-header .table-content tr{
-  background: #1d1010;
-  color:white;
+  background: #522b2b;
 }
 
 .table-proper{
@@ -36,7 +44,6 @@ td{
 
 .table-proper .table-content tr td {
     border-radius: 2px;
-    background-color: white;
     border:solid black 1px;
     overflow:hidden;
     position:relative;
@@ -75,10 +82,11 @@ td{
 
 .table-add-button{
     margin-top:10px;
-    background-color: red;
     border-radius: 2px;
-    width:150px;
     height:60px;
+    width:100%;
+    display:flex;
+    flex-direction: row-reverse;
 }
 
 .subject_name-column{
@@ -88,4 +96,25 @@ td{
 .subject_type-column{
     width:30%;
     min-width:150px;
+}
+
+.table-add-button a{
+    width:150px;
+    font-size: 16px;
+}
+
+.table-content tr td{
+    padding-left:10px;
+}
+
+.student_name-column{
+    width:50%;
+}
+
+.student_exam-column{
+    width:25%;
+}
+
+.student_date-column{
+    width:25%;
 }

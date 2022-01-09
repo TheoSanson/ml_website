@@ -277,3 +277,112 @@ body{
     display: none;
   }
 }
+
+/* footer styling */
+
+.page-footer{
+  margin-top:100px;
+  border-top:solid darkred 1px;
+  background-image: linear-gradient(rgb(138, 56, 56), rgb(44, 5, 5));
+  margin-left:60px;
+  width: calc(100% - 60px);
+}
+
+.footer-container{
+  position:relative;
+  left:-30px;
+  white-space: nowrap;
+  width:300px;
+  height:480px;
+  margin:auto;
+  display:grid;
+  grid-template-rows:200px 80px 100px;
+  grid-template-columns: auto;
+}
+
+@media(min-width:960px){
+  .footer-container{
+      grid-template-columns: 34% 33% 33%;
+      grid-template-rows:200px;
+      width:900px;
+      height:200px;
+  }
+}
+
+.footer-buttons-container, .footer-seal-container{
+  height:100%;
+}
+
+.footer-seal{
+  display:flex;
+}
+
+.footer-seal-container{
+  padding-top:20px;
+  font-size:25px;
+  color:white;
+  display:flex;
+  flex-direction: column;
+}
+
+.footer-img-container{
+  width:30%;
+}
+
+.footer-wmsu-container{
+  width:70%;
+}
+
+.footer-wmsu-container p{
+  margin:0px;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-img-container img{
+  position:relative;
+  top:3px;
+  left:17px;
+  height:70px;
+  width:70px;
+}
+
+.footer-location-info{
+  padding-top:10px;
+  display:flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.footer-location-info p{
+  font-size:12px;
+  margin:0px;
+  margin-right:10px;
+}
+
+.footer-buttons-container{
+  padding-top:30px;
+  padding-left:40px;
+  color:white;
+  font-size:15px;
+  display:grid;
+  grid-auto-rows:25px;
+  grid-auto-columns:auto;
+}
+
+.footer-buttons-container a{
+  color:rgb(255, 255, 255) !important;
+  padding-left:5px;
+}
+
+.footer-buttons-container a:hover{
+  color:rgb(255, 221, 221) !important;
+}
+
+.footer-contact-info{
+  color:rgb(255, 255, 255);
+  margin:0px;
+  margin-left:20px;
+}
