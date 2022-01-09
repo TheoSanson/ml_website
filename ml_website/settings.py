@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-o3b(xq*5&005k6f)%vwhtqju&)9*!a)8%gfrgd+g_m^2z2h!#f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','https://wmsu-cet.herokuapp.com/']
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','https://wmsu-cet.herokuapp.com/', config('SERVER', default='127.0.0.1')]
 # Application definition
 
 INSTALLED_APPS = [
