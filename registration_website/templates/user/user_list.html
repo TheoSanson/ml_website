@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/table' %}.css">
+{% endblock links %}
+
+{% block content %}
+    <div class="col-md-12" style="height:600px; padding:10px;">
+        <div class="table-container" style="height:95%; width:100%;">
+            <div class="table-header">
+                <table class="table-content" style="height:100%;">
+                    <tr>
+                        <td class='subject_name-column'>
+                            User Name
+                        </td>
+                        <td class='subject_type-column'>
+                            Email
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-proper">
+                <table class="table-content">
+                    {% for user in users %}
+                    <tr>
+                        <td class='subject_name-column'>
+                            {{ user.first_name }} {{ user.last_name }}
+                        </td>
+                        <td class='subject_type-column'>
+                            {{ user.email }}
+                            <div class="table-button-container">
+                                <a href="{% url 'user_admin_edit' user.id %}">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="table-add-button">
+                <a href="{% url 'user_add' %}" class="btn btn-success btn-lg">
+                    Add New User
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

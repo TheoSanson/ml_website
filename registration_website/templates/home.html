@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<h1 class="display-4">WMSU CET<br>Online Registration System</h1>
+<p class="lead">Select an Option to get started</p>
+<hr class="my-4">
+{% if not request.user.is_authenticated %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'registration_apply' %}">
+            Apply for WMSU CET
+        </a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'login' %}">
+            Login
+        </a>
+    </div>
+</div>
+{% else %}
+<div class="col-md-12">
+    <a href="{% url 'registration_list' %}">
+        View Applicants
+    </a>
+</div>
+<div class="col-md-12">
+    <a href="{% url 'exam_list' %}">
+        Manage Examinations
+    </a>
+</div>
+{% endif %}
+{% endblock content %}

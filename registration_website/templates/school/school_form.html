@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
 
 {% block content %}
-<form action="" method="post" autocomplete="off" onsubmit="return validateForm()">
+<form id="form-id" action="" method="post" autocomplete="off" onsubmit="return validateForm()">
     {% csrf_token %}
     <div class="row col-md-12">
         {{form.school_name|as_crispy_field}}
@@ -26,7 +28,7 @@
             </a>
         </div>
         <div class="col-md-8">
-            <button type="submit" class="btn btn-success col-12 btn-lg"><i class="fas fa-clipboard-check"></i> Submit</button>
+            <button type="submit" class="btn btn-success col-12 btn-lg" onclick='beforeSubmit()'><i class="fas fa-clipboard-check"></i> Submit</button>
         </div>
     </div>
     {% if form.errors %}
@@ -45,3 +47,46 @@
     {% endif %}
 </form>
 {% endblock content %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="{% static 'js/examination_forms.js' %}"></script>
+<script>
+    beforeSubmit = function(){
+        if (validateForm()){
+            $("#form-id").submit();   
+        }                 
+    }
+
+    let validateForm = function(){
+        let elementValidate = [
+            document.getElementById("id_school_name"),
+            document.getElementById("id_school_type"),
+            document.getElementById("id_school_category"),
+            document.getElementById("id_district"),
+            document.getElementById("id_school_address"),
+        ];
+
+        let validateLength = elementValidate.length;
+        let isEmpty = false;
+
+        for(let i = 0; i < validateLength; i++){
+            if (elementValidate[i].value == "") {
+                elementValidate[i].style.outline = "solid rgb(226, 111, 111) 1px";
+                isEmpty = true;
+            }
+        }
+        
+
+        if(isEmpty == true){
+            alert('Please Fill out the Required Fields')
+            return false;
+        }
+
+        else{
+            return true;
+        }
+
+    }
+</script>
+{% endblock javascript %}

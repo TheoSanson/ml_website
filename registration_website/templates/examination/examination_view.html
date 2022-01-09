@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/student_view' %}.css">
+{% endblock links %}
+
+{% block content %}
+<p class="lead">Exam View</p>
+<hr class="my-4">
+<div class="row">
+    <div class="row mb-3">
+        <div class="col-md-5">
+            <h4 class='student-label'>
+                Exam Schedule
+            </h4>
+            <h2>
+                {{exam.exam_date}}, {{exam.exam_time}}
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <h4 class='student-label'>
+                Date set
+            </h4>
+            <h2>
+                {{exam.time_set}}
+            </h2>
+        </div>
+        <div class="col-md-3">
+            <h4 class='student-label'>
+                Max Examinees
+            </h4>
+            <h2>
+                {{exam.max_examinees}}
+            </h2>
+        </div>
+    </div>
+    <hr class="my-4">
+    <div class="row mb-3">
+        <h4 class='student-label'>
+            Venues, Students
+        </h4>
+        <div class="grade-container" style='position:relative;'>
+            {% for venue, students in venues_students %}
+            <table style='margin-bottom:15px; margin-top:10px; position:relative;'>
+                
+                <tr>
+                    <td class='subject-column'>
+                        <b>{{venue.venue}}</b>
+                        <div style='position:absolute; left:calc(100% - 30px); top:3px;'>
+                            <a href="{% url 'exam_venue_print' venue.id %}">
+                                <i class="fas fa-print"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% for student in students %}
+                <tr>
+                    <td class='subject-column'>
+                        {{ student }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+    <hr class="my-4">
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <a href="{% url 'exam_list' %}">
+                <button type="button" class="btn btn-secondary col-12 btn-lg"><i class="fas fa-list"></i> Return to List</button>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'exam_print' exam.id %}" target='_blank'>
+                <button type="button" class="btn btn-secondary col-12 btn-lg"><i class="fas fa-print"></i> Print Data </button>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'exam_update' exam.id %}">
+                <button type="button" class="btn btn-secondary col-12 btn-lg"><i class="far fa-edit"></i> Edit Data </button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

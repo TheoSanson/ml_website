@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block content %}
+<h1 class="display-4">WMSU CET<br>Status Tracking</h1>
+<p class="lead">Please input your Tracking Code to view your status</p>
+<hr class="my-4">
+<form action="" method="post" autocomplete="off" class="row" onsubmit="//return validateForm()">
+    {% csrf_token %}
+    <div class="row mb-3">
+        <div class="col-md-12">
+            {{ form.tracking_number|as_crispy_field }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <a href="{% url 'home' %}">
+                <button type="button" class="btn btn-secondary col-12 btn-lg"><i class="fas fa-list"></i> Return to Home</button>
+            </a>
+        </div>
+        <div class="col-md-4 offset-md-4">
+            <button type="submit" class="btn btn-success col-12 btn-lg"><i class="fas fa-clipboard-check"></i> Submit</button>
+        </div>
+    </div>
+</form>
+{% endblock content %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h1 class="display-4">WMSU CET<br>College Record</h1>
+<hr class="my-4">
+
+<div class="row">
+    <h2 class="col-md-12">
+        {{ college.college_name }}
+    </h2>
+</div>
+<div class="row">
+    Venues:
+</div>
+<div class="row">
+    {% for venue in venues %}
+    <div class="col-md-6">
+        {{ venue.room_code }}
+    </div>
+    {% endfor %}
+</div>
+<div class="row mt-5">
+    <div class="col-md-4">
+        <a href="{% url 'college_list' %}" class="btn col-12 btn-secondary btn-lg">
+            <i class="fas fa-list"></i> Back to List
+        </a>
+    </div>
+    <div class="col-md-8">
+        <a href="{% url 'college_edit' college.id %}" class="btn col-12 btn-primary btn-lg">
+            <i class="fas fa-clipboard-check"></i> Update
+        </a>
+    </div>
+</div>
+{% endblock content %}

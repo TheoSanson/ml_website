@@ -3,28 +3,41 @@ from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
 
+class College(models.Model):
+    college_name = models.CharField(max_length=100,default='')
+    
+    def __str__(self):
+        return self.college_name
+
 class Venue(models.Model):
     room_code = models.CharField(max_length=10,default='')
-    college_code = models.CharField(max_length=10,default='')
+    college_code = models.ForeignKey(College,on_delete=models.CASCADE,related_name='venues')
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['room_code', 'college_code'], name='Room x College Constraint')
         ]
+    
+    def __str__(self):
+        return self.room_code + ' ' + self.college_code.college_name
 
 class Examination(models.Model):
     exam_date = models.DateField()
     exam_time = models.TimeField()
     max_examinees = models.IntegerField()
     time_set = models.DateTimeField(auto_now=True)
+    class Meta:
+            ordering = ["exam_date"]
 
 class ExaminationVenueAssignment(models.Model):
-    examination = models.ForeignKey(Examination,on_delete=models.CASCADE)
+    examination = models.ForeignKey(Examination,on_delete=models.CASCADE,related_name='examination_venues')
     venue = models.ForeignKey(Venue,on_delete=models.CASCADE)
+    current_examinees = models.IntegerField(default=0)
+    max_examinees = models.IntegerField()
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['examination', 'venue'], name='room_college constraint')
+            models.UniqueConstraint(fields=['examination', 'venue'], name='room_college constraint') #so that users can later add rooms to exam without dupes.
         ]
 
 #REVERSED THE NAMES OF SCHOOL CATEGORY AND TYPE 
@@ -122,7 +135,7 @@ class Student(models.Model):
     second_course = models.CharField(max_length=40,default='') #Dropdown Selection?
     graduation_date = models.DateField()
 
-    #examination = models.ForeignKey(ExaminationVenueAssignment,on_delete=models.RESTRICT)
+    examination_assignment = models.ForeignKey(ExaminationVenueAssignment,on_delete=models.RESTRICT,related_name='student_examinations')
     date_registered = models.DateTimeField(auto_now=True)
 
     tracking_number = models.CharField(max_length=6,unique=True,default='')
@@ -143,6 +156,7 @@ class Subject(models.Model):
 
 
 class SubjectAssignment(models.Model):
-    student = models.ForeignKey(Student,on_delete=models.CASCADE)
+    student = models.ForeignKey(Student,on_delete=models.CASCADE,related_name='grades')
     subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
     value = models.FloatField()
+

@@ -3,42 +3,49 @@
 {% load widget_tweaks %}
 {% load static %}
 
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/student_form' %}.css">
+{% endblock links %}
+
 {% block content %}
-<form action="" method="post" autocomplete="off" onsubmit="return validateForm()">
+
+<form id="form-id" action="" method="post" autocomplete="off">
     {% csrf_token %}
-    <div class="row col-md-12">
-        {{form.subject_name|as_crispy_field}}
+    <div class="row-mb-3" style='display:flex;align-items: center;justify-content: center;'>
+        <h2>Login</h2>
     </div>
-    <div class="row col-md-12">
-        {{form.subject_type|as_crispy_field}}
-    </div>
-    
-    <div class="row">
+    <div class="row mb-3">
+        <div class="col-md-4"></div>
         <div class="col-md-4">
-            <a href="{% url 'home' %}" class="btn col-12 btn-secondary btn-lg">
-                <i class="fas fa-list"></i> Back to Home
-            </a>
+            {{form.username|add_class:"form-control"|as_crispy_field}}
         </div>
-        <div class="col-md-8">
-            <button type="submit" class="btn btn-success col-12 btn-lg" onclick='beforeSubmit()'><i class="fas fa-clipboard-check"></i> Submit</button>
-        </div>
+        <div class="col-md-4"></div>
     </div>
-    {% if form.errors %}
-    <div class="alert alert-danger alert-dismissible col-12 mx-1" role="alert">
-        <div id="form_errors">
-            {% for key, value in form.errors.items %}
-                <span class="fieldWrapper">
-                    {{ key }}:{{ value }}
-                </span>
-            {% endfor %}
+    <div class="row mb-3">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            {{form.password|add_class:"form-control"|as_crispy_field}}
         </div>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <div class="col-md-4"></div>
     </div>
-    {% endif %}
+    <div class="row mb-3">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-success col-12 btn-lg" onclick='beforeSubmit()'>Login</button>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4"></div>
+        <div class="col-md-4" style='display:flex; align-items: center; justify-content: center;'>
+            <a href="{% url 'home' %}">Back to home</a>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
 </form>
+
 {% endblock content %}
+
 
 
 {% block javascript %}
@@ -53,8 +60,8 @@
 
     let validateForm = function(){
         let elementValidate = [
-            document.getElementById("id_subject_name"),
-            document.getElementById("id_subject_type"),
+            document.getElementById("id_username"),
+            document.getElementById("id_password"),
         ];
 
         let validateLength = elementValidate.length;
