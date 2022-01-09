@@ -204,7 +204,7 @@ def student_apply(request):
             'newformset':newformset,
             'student_boole_form':student_boole_form,
         } 
-        return render(request, "applicant/student_form.html ", context)
+        return render(request, "applicant/student_form.html", context)
 
     else:
         #Get Main Student Form
@@ -468,7 +468,7 @@ def student_apply(request):
 
         schoolform = SchoolForm()
         formset = subjectFormset()
-        return render(request, "applicant/student_form.html ", {'form':form, 'schoolform':schoolform,'formset':formset})
+        return render(request, "applicant/student_form.html", {'form':form, 'schoolform':schoolform,'formset':formset})
 
 def student_search(request):
     if request.method == 'GET':
