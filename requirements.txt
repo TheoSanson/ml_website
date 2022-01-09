@@ -19,7 +19,6 @@ django-widget-tweaks==1.4.9
 fasteners==0.16.3
 gcs-oauth2-boto-plugin==3.0
 gunicorn==20.1.0
-heroku==0.1.4
 httplib2==0.20.2
 idna==3.3
 joblib==1.1.0
