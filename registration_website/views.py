@@ -140,7 +140,7 @@ def subject_list(request):
     context = {
         'subject_list': subject_objects
     }
-    return render(request, "subject/subject_list.html ", context)
+    return render(request, "subject/subject_list.html", context)
 
 @login_required
 def school_form(request, id=0):
